@@ -1,0 +1,13 @@
+injection_detection:
+  block_threshold: 0.75
+  warn_threshold: 0.40
+
+presidio:
+  score_threshold: 0.6
+
+policy:
+  default_action: "mask"
+  block_on_high_injection: true
+
+latency:
+  log_enabled: true
