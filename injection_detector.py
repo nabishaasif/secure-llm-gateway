@@ -1,5 +1,4 @@
 import re
-
 INJECTION_PATTERNS = [
     (r"ignore (all |previous |above )?instructions", 0.9),
     (r"you are now", 0.7),
