@@ -8,7 +8,6 @@ from presidio_analyzer import (
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_anonymizer import AnonymizerEngine
 
-
 class ApiKeyRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern("API_KEY_SK",      r"\bsk-[a-zA-Z0-9]{20,}\b",            0.85),
@@ -21,8 +20,6 @@ class ApiKeyRecognizer(PatternRecognizer):
             patterns=self.PATTERNS,
             context=["key", "token", "secret", "api", "auth"],
         )
-
-
 class InternalIdRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern("EMPLOYEE_ID", r"\bEMP-\d{4,6}\b", 0.90),
@@ -34,9 +31,7 @@ class InternalIdRecognizer(PatternRecognizer):
             supported_entity="INTERNAL_ID",
             patterns=self.PATTERNS,
             context=["employee", "order", "ticket", "id", "reference"],
-        )
-
-
+        )    
 class ContextAwarePhoneRecognizer(PatternRecognizer):
     """
     Phone recognizer with manual context boosting.
@@ -76,7 +71,6 @@ class ContextAwarePhoneRecognizer(PatternRecognizer):
             )
         return boosted
 
-
 def detect_composite_pii(text: str, results: list) -> list:
     entity_types = {r.entity_type for r in results}
     composite_flags = []
@@ -97,22 +91,18 @@ def detect_composite_pii(text: str, results: list) -> list:
 
     return composite_flags
 
-
 def build_analyzer() -> AnalyzerEngine:
     provider = NlpEngineProvider(nlp_configuration={
         "nlp_engine_name": "spacy",
         "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
     })
     nlp_engine = provider.create_engine()
-
     analyzer = AnalyzerEngine(nlp_engine=nlp_engine, supported_languages=["en"])
 
     analyzer.registry.add_recognizer(ApiKeyRecognizer())
     analyzer.registry.add_recognizer(InternalIdRecognizer())
     analyzer.registry.add_recognizer(ContextAwarePhoneRecognizer())
-
     return analyzer
-
 
 def analyze_pii(text: str, analyzer: AnalyzerEngine, threshold: float = 0.6) -> dict:
     anonymizer = AnonymizerEngine()
